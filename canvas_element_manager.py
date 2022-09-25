@@ -14,9 +14,9 @@ import cod2_default_element_settings
 import canvas_element_properties
 
 
-import copy, tkMessageBox, translator
+import copy, translator
 
-from Tkinter 	import *
+from tkinter 	import *
 from ttk		import *
 from PIL		import Image, ImageTk
 
@@ -79,7 +79,7 @@ class Manage:
 		return elementID
 		
 	def createImageElement(self, imageID=''):
-		if not self.GUI.guiRawImageData.has_key(imageID):
+		if not imageID in self.GUI.guiRawImageData:
 			self.GUI.guiRawImageData[imageID] = Image.new('RGBA', (1, 1), (0,0,0,0) )
 	
 		element = {
@@ -324,13 +324,13 @@ class Manage:
 		element['moveG'] = self.canvas.create_image(0, 0, image=self.images['ICONmoveg'], state = 'hidden')
 		element['invisible'] = self.canvas.create_image(0, 0, image=self.images['ICONinvisible'], state = 'hidden')
 		
-		if not element.has_key('supportsScalle'):
+		if not 'supportsScalle' in element:
 			self.canvas.itemconfigure(element['moveG'], image = '')	
 			
-		if element.has_key('background'):
+		if 'background' in element:
 			element['background'] = self.canvas.create_image(0, 0, image='', anchor = 'nw')
 	
-		if element.has_key('supportBackImage'):
+		if 'supportBackImage' in element:
 			element['backImage'] = Image.new('RGBA', (200, 200), (0,0,0,128) )
 			element['backImageColour'] = (0, 0, 0, 128)
 			element['backImageC'] = self.canvas.create_image(0, 0, image='', anchor = 'nw')
@@ -346,7 +346,7 @@ class Manage:
 		element['sliderImage'] = self.canvas.create_image(0, 0, image= element['sliderImageR'], anchor = 'nw')
 
 	def updateRectSizeBasedOnFont(self, element):
-		if not self.settings['autoUpdateBBOX'] or not element.has_key('text'):
+		if not self.settings['autoUpdateBBOX'] or not 'text' in element:
 			return
 	
 		x1, y1, x2, y2 = self.canvas.bbox(element['id'])
@@ -357,7 +357,7 @@ class Manage:
 		if element['type'] == 'field':
 			element['rect'][2] += 100
 		
-		if element.has_key('sliderImageorg'):
+		if 'sliderImageorg' in element:
 			element['rect'][2] += 150
 		
 		element['properties']['rect'][2].var.set(' '.join(str(x) for x in element['rect']))
@@ -367,7 +367,7 @@ class Manage:
 	def calculateTextAligment(self, element):
 		allowrdtypes = ['label', 'item', 'button', 'slider', 'field', 'list']
 		
-		if element['type'] not in allowrdtypes or not element['properties'].has_key('textaligny'):
+		if element['type'] not in allowrdtypes or not 'textaligny' in element['properties']:
 			return
 	
 		x, y = self.canvas.coords(element['id'])
@@ -403,14 +403,14 @@ class Manage:
 		
 		self.calculateTextAligment(element)
 		
-		if element.has_key('border'):
+		if 'border' in element:
 			self.canvas.coords(element['border'], element['pos'][0]+element['originPoint'][0]+element['rect'][0],  element['pos'][1]+element['originPoint'][1]+element['rect'][1],  element['pos'][0]+element['originPoint'][0]+element['rect'][0]+ element['rect'][2],  element['pos'][1]+element['originPoint'][1]+element['rect'][1]+element['rect'][3] )
 
 			
-		if element.has_key('supportBackImage'):
+		if 'supportBackImage' in element:
 			self.canvas.coords(element['backImageC'], element['pos'][0]+element['originPoint'][0]+element['rect'][0],  element['pos'][1]+element['originPoint'][1]+element['rect'][1] )
 			
-		if element.has_key('background'):
+		if 'background' in element:
 			self.canvas.coords(element['background'], element['pos'][0]+element['originPoint'][0],  element['pos'][1]+element['originPoint'][1] )
 		
 		if element['type'] == 'rect':
@@ -421,7 +421,7 @@ class Manage:
 					self.canvas.itemconfigure(element['id'], image = element['imageR'])
 				except: pass
 		
-		if element['type'] == 'image' or element['properties'].has_key('background'):
+		if element['type'] == 'image' or 'background' in element['properties']:
 			if updateImage:
 				try:
 					element['image'] = element['imageOriginal'].resize((element['rect'][2]+element['rect'][0], element['rect'][3]+element['rect'][1]), Image.ANTIALIAS )
@@ -434,14 +434,14 @@ class Manage:
 				if element['type'] == 'image': self.canvas.itemconfigure(element['backImageC'], image = '')
 				else: self.canvas.itemconfigure(element['background'], image = '' )
 					
-		if element.has_key('sliderImageorg'):
+		if 'sliderImageorg' in element:
 			x1, y1, x2, y2 = self.canvas.bbox(element['id'])
 			value = x2-x1
 			element['sliderImageR'] = ImageTk.PhotoImage(element['sliderImageorg'])
 			self.canvas.coords(element['sliderImage'], element['pos'][0]+element['rect'][0]+element['originPoint'][0]+value,  element['pos'][1]+element['rect'][1]+element['originPoint'][1])
 			self.canvas.itemconfigure(element['sliderImage'], image = element['sliderImageR'])
 		
-		if element.has_key('supportBackImage'):
+		if 'supportBackImage' in element:
 			if updateImage:
 
 				if element['style'] != 'WINDOW_STYLE_FILLED':
@@ -463,13 +463,13 @@ class Manage:
 			element = self.elements[self.selectedElement]
 
 		# Text
-		if element['properties'].has_key('text'):
+		if 'text' in element['properties']:
 			newValue = element['properties']['text'][2].var.get()
 			if element['text'] != newValue:
 				element['text'] = newValue
 				self.canvas.itemconfigure(element['id'], text = element['text'])
 				
-				if element['type'] == 'list' or (element['properties'].has_key('dvarFloatList') and element['properties']['type'] == 'ITEM_TYPE_MULTI'):
+				if element['type'] == 'list' or ('dvarFloatList' in element['properties'] and element['properties']['type'] == 'ITEM_TYPE_MULTI'):
 					self.updateListText(element)
 				
 				self.propertiesManagment.updateElementList()
@@ -477,7 +477,7 @@ class Manage:
 				self.calculateCords(element, updateImage = True)
 		
 		# Position (origin)
-		if element['properties'].has_key('origin') and property == 'origin':
+		if 'origin' in element['properties'] and property == 'origin':
 			newValue = cod2_default_element_settings.getMultipleValuesFromKey(element['properties']['origin'][2].var.get())
 			if str(element['pos'][0]) + " " + str(element['pos'][1]) != newValue:
 				try:
@@ -488,13 +488,13 @@ class Manage:
 				self.calculateCords(element)
 		
 		# Rectangle
-		if element['properties'].has_key('rect'):
+		if 'rect' in element['properties']:
 			newValue = cod2_default_element_settings.getMultipleValuesFromKey(element['properties']['rect'][2].var.get())
 			if str(element['rect']).replace('[','').replace(']', '').replace(',','') != newValue or 'rect' in element['badArgument']:
 				try:
 					element['rect'] = [int(newValue.split(' ')[0]), int(newValue.split(' ')[1]), int(newValue.split(' ')[2]), int(newValue.split(' ')[3]), int(newValue.split(' ')[4]) , int(newValue.split(' ')[5])]
 					if element['rect'][4] ==5  or element['rect'][5] == 5 or element['rect'][4] ==6  or element['rect'][5] == 6:
-						tkMessageBox.showinfo('Warning 001', '''You have set elements alignment to "noscale" and what that means is positional and size properties of element will not change on different resolutions (different from 640x480). This is probably not what you wanted (unles you know what youre doing) ''')
+						messagebox.showinfo('Warning 001', '''You have set elements alignment to "noscale" and what that means is positional and size properties of element will not change on different resolutions (different from 640x480). This is probably not what you wanted (unles you know what youre doing) ''')
 				except:
 					self.propertiesManagment.setBadPropertyOption(element['id'], 'rect')
 					return
@@ -504,7 +504,7 @@ class Manage:
 			
 		
 		# Font size (textscale)
-		if element['properties'].has_key('textscale'):
+		if 'textscale' in element['properties']:
 			try:
 				newValue = float(cod2_default_element_settings.getMultipleValuesFromKey(element['properties']['textscale'][2].var.get()))
 			except:
@@ -521,7 +521,7 @@ class Manage:
 				
 		
 		# bold 
-		if element['properties'].has_key('textfont'):
+		if 'textfont' in element['properties']:
 			newValue = cod2_default_element_settings.getMultipleValuesFromKey(element['properties']['textfont'][2].var.get())
 		
 			if element['bold'] != newValue:
@@ -532,7 +532,7 @@ class Manage:
 		
 		
 		# forecolor
-		if element['properties'].has_key('forecolor'):
+		if 'forecolor' in element['properties']:
 			newValue = cod2_default_element_settings.getMultipleValuesFromKey(element['properties']['forecolor'][2].var.get())
 
 			if element['colour'] != newValue or 'forecolor' in element['badArgument']:
@@ -543,7 +543,7 @@ class Manage:
 					self.propertiesManagment.setBadPropertyOption(element['id'], 'forecolor')
 					return
 					
-				if element.has_key('sliderImageorg'):
+				if 'sliderImageorg' in element:
 					self.reColorImage(rgba, element['sliderImageorg'])
 					self.calculateCords(element, updateImage = True)
 					
@@ -552,7 +552,7 @@ class Manage:
 				self.propertiesManagment.setGoodPropertyOption(element['id'], 'forecolor')
 		
 		# Name
-		if element['properties'].has_key('name'):
+		if 'name' in element['properties']:
 			newValue = element['properties']['name'][2].var.get()
 			
 			if element['name'] != newValue:
@@ -561,7 +561,7 @@ class Manage:
 		
 		
 		# Border
-		if element['properties'].has_key('border') and property == 'border':
+		if 'border' in element['properties'] and property == 'border':
 			newValue = cod2_default_element_settings.getMultipleValuesFromKey(element['properties']['border'][2].var.get())
 			if newValue == '1':
 				self.canvas.itemconfigure(element['border'], state = 'normal')
@@ -569,7 +569,7 @@ class Manage:
 				self.canvas.itemconfigure(element['border'], state = 'hidden')
 				
 		# Bordercolour
-		if element['properties'].has_key('bordercolor') and property == 'bordercolor':
+		if 'bordercolor' in element['properties'] and property == 'bordercolor':
 			newValue = cod2_default_element_settings.getMultipleValuesFromKey(element['properties']['bordercolor'][2].var.get())
 			try:
 				rgb = self.getRGBA(newValue)[0:3]
@@ -581,7 +581,7 @@ class Manage:
 			self.propertiesManagment.setGoodPropertyOption(element['id'], 'bordercolor')
 		
 		# Backcolour
-		if element['properties'].has_key('backcolor') and property == 'backcolor':
+		if 'backcolor' in element['properties'] and property == 'backcolor':
 			newValue = cod2_default_element_settings.getMultipleValuesFromKey(element['properties']['backcolor'][2].var.get())
 			try:
 				rgba = self.getRGBA(newValue)[:]
@@ -594,7 +594,7 @@ class Manage:
 			self.propertiesManagment.setGoodPropertyOption(element['id'], 'backcolor')
 		
 		# Visible
-		if element['properties'].has_key('visible') and property == 'visible':
+		if 'visible' in element['properties'] and property == 'visible':
 			newValue = cod2_default_element_settings.getMultipleValuesFromKey(element['properties']['visible'][2].var.get())
 			
 			if newValue == '1':
@@ -603,7 +603,7 @@ class Manage:
 				self.canvas.itemconfigure(element['invisible'], state = 'normal')
 		
 		# Style
-		if element['properties'].has_key('style') and property == 'style' and element.has_key('style'):
+		if 'style' in element['properties'] and property == 'style' and 'style' in element:
 			newValue = element['properties']['style'][2].var.get()
 		
 			if element['style'] != newValue:
@@ -611,11 +611,11 @@ class Manage:
 				self.calculateCords(element, updateImage = True)
 				
 		# dvarFloatList
-		if element['properties'].has_key('dvarFloatList') and property == 'dvarFloatList':
+		if 'dvarFloatList' in element['properties'] and property == 'dvarFloatList':
 			self.updateListText(element)	
 			
 		# textalign
-		if element['properties'].has_key('textalign') and property == 'textalign':
+		if 'textalign' in element['properties'] and property == 'textalign':
 			newValue = element['properties']['textalign'][2].var.get()
 			
 			if newValue == 'ITEM_ALIGN_LEFT':
@@ -626,11 +626,11 @@ class Manage:
 				self.canvas.itemconfigure(element['id'], anchor = 'ne')
 				
 		# background
-		if element['properties'].has_key('background') and property == 'background':
+		if 'background' in element['properties'] and property == 'background':
 			newValue = element['properties']['background'][2].var.get()
 			if not newValue.startswith('COD'): newValue  = 'COD' + newValue
 			
-			if self.GUI.guiRawImageData.has_key(newValue):
+			if newValue in self.GUI.guiRawImageData:
 				element['imageOriginal'] = self.GUI.guiRawImageData[newValue]
 				element['image'] = self.GUI.guiRawImageData[newValue]
 		
@@ -639,7 +639,7 @@ class Manage:
 				self.calculateCords(element, updateImage = True)
 				
 		# textaligny
-		if element['properties'].has_key('textaligny') and property == 'textaligny':
+		if 'textaligny' in element['properties'] and property == 'textaligny':
 			try:
 				newValue = int(element['properties']['textaligny'][2].var.get())
 				self.propertiesManagment.setGoodPropertyOption(element['id'], 'textaligny')
@@ -648,7 +648,7 @@ class Manage:
 				self.propertiesManagment.setBadPropertyOption(element['id'], 'textaligny')
 				
 		# textalignx
-		if element['properties'].has_key('textalignx') and property == 'textalignx':
+		if 'textalignx' in element['properties'] and property == 'textalignx':
 			try:
 				newValue = int(element['properties']['textalignx'][2].var.get())
 				self.propertiesManagment.setGoodPropertyOption(element['id'], 'textalignx')
@@ -667,7 +667,7 @@ class Manage:
 	def updateOnPropertyNonElement(self, element, property):
 		
 		# Name
-		if element['properties'].has_key('name'):
+		if 'name' in element['properties']:
 			newValue = element['properties']['name'][2].var.get()
 			
 			if element['name'] != newValue:
@@ -676,7 +676,7 @@ class Manage:
 					element['name'] = newValue
 		
 		# Style
-		if element['properties'].has_key('style'):
+		if 'style' in element['properties']:
 			newValue = element['properties']['style'][2].var.get()
 		
 			if element['style'] != newValue:
@@ -684,7 +684,7 @@ class Manage:
 				self.GUI.MenuManager.updateBackImage(element)
 			
 		# Backcolour
-		if element['properties'].has_key('backcolor') and property == 'backcolor':
+		if 'backcolor' in element['properties'] and property == 'backcolor':
 			newValue = cod2_default_element_settings.getMultipleValuesFromKey(element['properties']['backcolor'][2].var.get())
 			try:
 				rgba = self.getRGBA(newValue)[:]
@@ -723,7 +723,7 @@ class Manage:
 		for element in elements:
 			elementID = element['id']
 			
-			if element.has_key('supportsScalle') and self.selectedElement != -1 and self.inside(x, y, ((element['pos'][0]+element['originPoint'][0]+element['rect'][0]+element['rect'][2]-10, element['pos'][1]+element['originPoint'][1]+element['rect'][1] + element['rect'][3]-10 ), (element['pos'][0]+element['originPoint'][0]+element['rect'][0]+element['rect'][2]+10, element['pos'][1]+element['originPoint'][1]+element['rect'][1]+element['rect'][3]+10) ) ):
+			if 'supportsScalle' in element and self.selectedElement != -1 and self.inside(x, y, ((element['pos'][0]+element['originPoint'][0]+element['rect'][0]+element['rect'][2]-10, element['pos'][1]+element['originPoint'][1]+element['rect'][1] + element['rect'][3]-10 ), (element['pos'][0]+element['originPoint'][0]+element['rect'][0]+element['rect'][2]+10, element['pos'][1]+element['originPoint'][1]+element['rect'][1]+element['rect'][3]+10) ) ):
 				element['scalling'] = [x,y]
 
 				return
@@ -735,8 +735,8 @@ class Manage:
 		self.disselectElement()
 		self.propertiesManagment.clearProperties()
 	
-	def inside(self, x, y, ((ax,ay), (bx,by) ) ):
-		return (x > ax and x < bx) and (y > ay and y < by)
+	def inside(self, x, y, z ): # ((ax,ay), (bx,by) )
+		return (x > z[0][0] and x < z[1][0]) and (y > z[0][1] and y < z[1][1])
 	
 	def removeAll(self):
 		self.disselectElement()
@@ -806,7 +806,7 @@ class Manage:
 		self.canvas.itemconfigure(element['moveF'], state = 'hidden' )
 		self.canvas.itemconfigure(element['bbox'], outline="#f4a273" )
 		
-		if element.has_key('scalling'):
+		if 'scalling' in element:
 			element.pop('scalling')
 		
 	def updatePosiotionValue(self, elementID):
@@ -839,7 +839,7 @@ class Manage:
 			return
 		element = self.elements[self.selectedElement]
 	
-		if element.has_key('scalling'):
+		if 'scalling' in element:
 			element['rect'][2] += event.x - element['scalling'][0]
 			element['rect'][3] += event.y - element['scalling'][1]
 			element['scalling'] = event.x, event.y
@@ -929,7 +929,7 @@ class Manage:
 		canvasElements = ['bbox', 'border', 'move', 'moveF', 'moveG', 'invisible',  'backImageC', 'id', 'sliderImage']
 		
 		for canvasElement in canvasElements:
-			if element.has_key(canvasElement):
+			if canvasElement in element:
 				try:
 					self.canvas.delete(element[canvasElement])
 				except :pass

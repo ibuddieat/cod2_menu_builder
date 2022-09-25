@@ -10,15 +10,14 @@ stevo.mitric@yahoo.com
 This code has no licence, feel free to do whatever you want with it.
 '''
 
-from Tkinter 	import *
+from tkinter 	import *
 from ttk		import *
 from threading	import Thread
 from PIL 		import Image, ImageTk
 
-from tkFileDialog	import askopenfilename, asksaveasfilename
-from tkMessageBox	import showinfo, askyesno
+from tkinter import filedialog, messagebox
 
-import Tkinter as tk
+import tkinter as tk
 
 import os, canvas_element_manager, copy, menu_manager, translator
 
@@ -223,7 +222,7 @@ class Main:
 		
 		
 	def browseImportOpen(self, top):
-		name = askopenfilename(parent = top)
+		name = filedialog.askopenfilename(parent = top)
 		if not name: return
 		
 		top.file.set('Import File: ' + name)
@@ -245,13 +244,13 @@ class Main:
 	def beginImport(self, top, top2 = ''):
 		res = translator.importMenuFile(self, top.file.get()[13:], out = top2)
 		if res == -1:
-			showinfo('Error 004', 'Invalid file location. (Could not open: '+top.file.get()[13:]+', errno 22) ', parent = top)
+			messagebox.showinfo('Error 004', 'Invalid file location. (Could not open: '+top.file.get()[13:]+', errno 22) ', parent = top)
 			return
 		elif res == -2:
-			showinfo('Error 005', 'Error occured during data processing. Check console for details.', parent = top)
+			messagebox.showinfo('Error 005', 'Error occured during data processing. Check console for details.', parent = top)
 			return
 		elif res == -3:
-			showinfo('Error 006', 'Error occured during menu creation. Check console for details.', parent = top)
+			messagebox.showinfo('Error 006', 'Error occured during menu creation. Check console for details.', parent = top)
 			return
 			
 		top.destroy()
@@ -314,7 +313,7 @@ class Main:
 		Button(top, text = 'Export', width = 15, command = lambda: self.exportMenuAction(top) ).place(x=100,y=85)
 	
 	def browseExportToSave(self, top):
-		name = asksaveasfilename(parent = top)
+		name = filedialog.asksaveasfilename(parent = top)
 		if not name: return
 		
 		top.saveTo.set('Save to: ' + name)
@@ -364,7 +363,7 @@ class Main:
 		
 	def onUpdateImage(self, top):
 		imgname = 'COD'+top.cb.var.get()
-		if not self.guiImages.has_key(imgname):
+		if not imgname in self.guiImages:
 			top.canvas.itemconfigure(top.image, image = self.guiImages['nopreview'])
 		else:
 			top.tempimage = self.guiRawImageData[imgname]
@@ -374,7 +373,7 @@ class Main:
 			top.canvas.itemconfigure(top.image, image = top.tempimage)
 		
 	def uploadImage(self, top):
-		name = askopenfilename( parent = top)
+		name = filedialog.askopenfilename( parent = top)
 		if not name: return
 		
 		try:
@@ -387,14 +386,14 @@ class Main:
 			top.images.append(name[3:])
 			top.cb.configure(values = top.images)
 		except:
-			showinfo('Error 002', 'Invalid/not supported image file', parent = top)
+			messagebox.showinfo('Error 002', 'Invalid/not supported image file', parent = top)
 			top.canvas.itemconfigure(top.image, image = self.guiImages['nopreview'])
 		
 	def newMenuPressed(self, event):
 		self.MenuManager.selectMenu( self.MenuManager.identifyMenuBasedOnID(self.nb.select()) )
 		
 	def deleteMenuPressed(self, *event):
-		res = askyesno('Confirm', 'Are you sure you want to delete this menu ?')
+		res = messagebox.askyesno('Confirm', 'Are you sure you want to delete this menu ?')
 		if not res: return
 	
 		self.MenuManager.removeMenu(self.nb.select())

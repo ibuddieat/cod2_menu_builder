@@ -10,10 +10,9 @@ stevo.mitric@yahoo.com
 This code has no licence, feel free to do whatever you want with it.
 '''
 
-from Tkinter 		import *
+from tkinter 		import *
 from ttk			import *
 
-from tkMessageBox 	import showinfo
 from PIL			import Image, ImageTk
 
 import copy, cod2_default_element_settings
@@ -93,7 +92,7 @@ class MenuManager:
 	
 	def removeMenu(self, id):
 		if len(self.Menus) <= 1:
-			showinfo('Error 001', 'Cannot delete last Menu.')
+			messagebox.showinfo('Error 001', 'Cannot delete last Menu.')
 			return
 		
 		self.GUI.elementManager.removeAll()

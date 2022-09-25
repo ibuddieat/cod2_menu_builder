@@ -13,7 +13,7 @@ This code has no licence, feel free to do whatever you want with it.
 import cod2_default_element_settings
 
 def log(msg, state = 'INFO', out = ''):
-	print state.upper() + ': ' + msg
+	print(state.upper() + ': ' + msg)
 	if out:
 		out.tx.insert('end', state.upper() + ': ' + msg + '\n')
 
@@ -113,7 +113,7 @@ def exportAsMenu(Menus, saveto = 'C:/users/stevo/desktop/test.menu'):
 	toWrite += '}\n'
 	
 	
-	file = open(saveto, 'wb')
+	file = open(saveto, 'w')
 	file.write(toWrite)
 	file.close()
 	
@@ -175,7 +175,7 @@ def processInclude(data, out=''):
 			log('Loading #include file: ' + path, out = out)
 			
 			path = 'Data/cod2_menus/' + path
-			file = open(path, 'rb')
+			file = open(path, 'r')
 			filedata = file.read().replace('\r', '')
 			while '/*' in filedata: filedata = filedata.split('/*', 1)[0] + filedata.split('/*', 1)[1].split('*/', 1)[1]
 			filedata = processData(filedata)
@@ -236,14 +236,14 @@ def loadItemDef(GUI, data, inx, out=''):
 		if not bracketNum:
 			break
 	
-	if element['properties'].has_key('rect'):
+	if 'rect' in element['properties']:
 		element['properties']['rect'][0] = cod2_default_element_settings.getMultipleValuesFromKey(element['properties']['rect'][2].var.get())
 	
 		while element['properties']['rect'][0].count(' ') < 5:
 			element['properties']['rect'][0] += ' 0'
 			element['properties']['rect'][2].var.set(element['properties']['rect'][0])
 		
-	if element['properties'].has_key('type') and element['properties']['type'][0] == 'ITEM_TYPE_SLIDER':
+	if 'type' in element['properties'] and element['properties']['type'][0] == 'ITEM_TYPE_SLIDER':
 		GUI.elementManager.initSlider(element)
 		GUI.elementManager.calculateCords(element, updateImage = True)
 		
@@ -306,11 +306,11 @@ def loadMenuDef(GUI, data, inx, out = ''):
 def importMenuFile(GUI, filePath = 'C:/users/stevo/desktop/ingame.menu', out = ''):
 	log('Import started ', out = out)
 	try:
-		file = open(filePath, 'rb')
+		file = open(filePath, 'r')
 		data = file.read().replace('\r', '')
 		file.close()
 		log('File has been read', 'success', out = out)
-	except Exception, err:
+	except Exception as err:
 		log('Following error occured while reading file: ' + str(err), 'critical', out = out)
 		return -1
 	
@@ -320,7 +320,7 @@ def importMenuFile(GUI, filePath = 'C:/users/stevo/desktop/ingame.menu', out = '
 		while '#include' in [item for sublist in data for item in sublist]:
 			data = processInclude(data, out=out)
 		log('All "#include" have been imported', 'success', out = out)
-	except Exception, err:
+	except Exception as err:
 		log('Following error occured while processing include: ' + str(err), 'critical', out = out)
 		return -2
 	
@@ -339,7 +339,7 @@ def importMenuFile(GUI, filePath = 'C:/users/stevo/desktop/ingame.menu', out = '
 				if item == 'menudef':
 					log('New menu has been found', out = out)
 					loadMenuDef(GUI, data, i+1, out=out)
-	except Exception, err:
+	except Exception as err:
 		log('Following error occured while processing file: ' + str(err), 'critical', out = out)
 		return -3
 	

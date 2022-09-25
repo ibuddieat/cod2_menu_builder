@@ -10,12 +10,12 @@ stevo.mitric@yahoo.com
 This code has no licence, feel free to do whatever you want with it.
 '''
 
-from Tkinter		import *
+from tkinter		import *
 from ttk			import *
 
 import cod2_default_element_settings
 
-from tkMessageBox	import showinfo
+#from tkMessageBox	import showinfo
 
 class Properties:
 	def __init__(self, Manage):
@@ -55,7 +55,7 @@ class Properties:
 		value = element['properties'][property][0]
 		
 		if 'CBN' in flags and value == '':
-			showinfo('Warning003', 'This property cannot be empty because it causes unpredictable stuff to happen.')
+			messagebox.showinfo('Warning003', 'This property cannot be empty because it causes unpredictable stuff to happen.')
 			element['properties'][property][2].var.set('A')
 	
 	def setBadPropertyOption(self, elementID, property, element = None):
@@ -108,7 +108,7 @@ class Properties:
 			elif property in cod2_default_element_settings.elementGroup['other']:
 				frame, rowINX = self.GUI.f34, 3
 			else:
-				print 'Unknown property: ', property
+				print("Unknown property: {}".format(property))
 				continue
 				
 			value = element['properties'][property][0]
@@ -192,10 +192,10 @@ class Properties:
 			element = self.manage.elements[elementID]
 			type = element['type']
 			id   = element['id']
-			if element.has_key('text'):
+			if 'text' in element:
 				text = element['text']
 			else: text = ' / '
-			if element['properties'].has_key('name'):
+			if 'name'in element['properties']:
 				type = element['properties']['name'][0]
 		
 			self.GUI.lb1.insert(END, '('+str(id)+') ' + type + ": " + text)
